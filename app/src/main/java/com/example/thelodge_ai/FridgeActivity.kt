@@ -3,8 +3,6 @@ package com.example.thelodge_ai
 import AppPreferences
 import FirestoreHelper
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -17,6 +15,7 @@ class FridgeActivity : AppCompatActivity() {
     private lateinit var humidityTitle: TextView
     private lateinit var humidityValue: TextView
     private val firestoreHelper = FirestoreHelper()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
