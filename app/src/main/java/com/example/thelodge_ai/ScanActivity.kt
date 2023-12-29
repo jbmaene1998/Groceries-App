@@ -19,12 +19,13 @@ import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+import okhttp3.OkHttpClient
+
 class ScanActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityScanBinding
     private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
-
     private lateinit var cameraExecutor: ExecutorService
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,11 +40,11 @@ class ScanActivity : AppCompatActivity() {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                this, Const.REQUIRED_PERMISSIONS , Const.REQUEST_CODE_PERMISSIONS
+                this, Const.REQUIRED_PERMISSIONS, Const.REQUEST_CODE_PERMISSIONS
             )
         }
 
-        binding.btnTakePhoto.setOnClickListener{
+        binding.btnTakePhoto.setOnClickListener {
             takePhoto()
         }
     }
@@ -139,19 +140,43 @@ class ScanActivity : AppCompatActivity() {
             ) == PackageManager.PERMISSION_GRANTED
         }
 
-    private fun detectProduct(photoFile: File){
-        runOnUiThread {
-            Toast.makeText(
-                this,
-                "Picture saved successfully!",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
     override fun onDestroy() {
          super.onDestroy()
         cameraExecutor.shutdown()
+    }
+
+    private fun detectProduct(photoFile: File) {
+        val client = OkHttpClient()
+
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart(
+                "file", photoFile.name,
+                photoFile.asRequestBody("image/*".toMediaTypeOrNull())
+            )
+            .build()
+
+        val request = Request.Builder()
+            .url("http://localhost:5000/upload")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val message = response.body?.string() ?: "Unknown response"
+                    runOnUiThread {
+                        Toast.makeText(this@ScanActivity, message, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.e(Const.TAG, "Upload failed: ${response.message}")
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e(Const.TAG, "Upload failed: ${e.message}", e)
+            }
+        })
     }
 
 }
