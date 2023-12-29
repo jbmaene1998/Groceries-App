@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "939165281099",
+    "project_id": "cloud-edge-3b19d",
+    "storage_bucket": "cloud-edge-3b19d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939165281099:android:07836f473a4ac57c2216ce",
+        "android_client_info": {
+          "package_name": "com.example.thelodge_ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkwcjTV0-vopJLsR7QFl00fe96pHkZbqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
