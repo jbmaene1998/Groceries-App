@@ -1,4 +1,5 @@
-// FridgeActivity.kt
+package com.example.thelodge_ai
+
 import AppPreferences
 import FirestoreHelper
 import android.os.Bundle

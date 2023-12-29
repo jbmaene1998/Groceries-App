@@ -5,59 +5,76 @@
     tools:context=".FridgeActivity">
 
     <TextView
-        android:id="@+id/temperatureTitle"
+        android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fahrenheit/Celsius"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"/>
-    />
-
-    <TextView
-        android:id="@+id/temperatureValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="{number}"
+        android:textColor="@color/black"
+        android:text="Fridge Metrics"
         android:textSize="38sp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"/>
-    />
-
-    <TextView
-        android:id="@+id/dewPointTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="DewPoint"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"/>
-    />
 
     <TextView
         android:id="@+id/dewPointValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="{number}"
-        android:textSize="38sp"
+        android:layout_below="@id/dewPointTitle"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"/>
-    />
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="{number}"
+        android:textSize="38sp" />
 
     <TextView
-        android:id="@+id/humidityTitle"
+        android:id="@+id/temperatureTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Humidity"
+        android:layout_below="@id/titleTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"/>
-    />
+        android:layout_marginTop="172dp"
+        android:layout_marginBottom="16dp"
+        android:text="Fahrenheit/Celsius" />
+
+    <TextView
+        android:id="@+id/temperatureValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/temperatureTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="{number}"
+        android:textSize="38sp" />
+
+    <TextView
+        android:id="@+id/dewPointTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/temperatureValue"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="DewPoint" />
 
     <TextView
         android:id="@+id/humidityValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="{number}"
-        android:textSize="38sp"
+        android:layout_below="@id/humidityTitle"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"/>
-    />
+        android:layout_marginTop="17dp"
+        android:layout_marginBottom="16dp"
+        android:text="{number}"
+        android:textSize="38sp" />
+
+    <TextView
+        android:id="@+id/humidityTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dewPointValue"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Humidity" />
+
 </RelativeLayout>
