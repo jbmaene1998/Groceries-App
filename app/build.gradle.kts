@@ -69,4 +69,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    // Add the Firebase dependencies here
+    implementation("com.google.firebase:firebase-core:23.0.0")
+    implementation("com.google.firebase:firebase-firestore:24.0.0")
 }
