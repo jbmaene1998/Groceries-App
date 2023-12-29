@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Groceries App"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+
+        <activity
+            android:name="com.example.thelodge_ai.MainActivity"
+            android:exported="true"
+            android:label="Groceries App"
+            android:theme="@style/Theme.TheLodgeAI">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Fridge Activity -->
+        <activity
+            android:name="com.example.thelodge_ai.FridgeActivity"
+            android:label="Groceries App"
+            android:theme="@style/Theme.TheLodgeAI"/>
+
+        <!-- Scan Activity -->
+        <activity
+            android:name="com.example.thelodge_ai.ScanActivity"
+            android:label="Groceries App"
+            android:theme="@style/Theme.TheLodgeAI"/>
+
+        <!-- Settings Activity -->
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Groceries App"
+            android:theme="@style/Theme.TheLodgeAI"/>
+
+    </application>
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+</manifest>

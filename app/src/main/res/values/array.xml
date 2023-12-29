@@ -1,0 +1,7 @@
+<resources>
+    <string-array name="navigation_options">
+        <item>Fridge</item>
+        <item>Metrics</item>
+        <item>Recipes</item>
+    </string-array>
+</resources>
