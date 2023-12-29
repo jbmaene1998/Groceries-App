@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/titleTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="172dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="16dp"
         android:text="Fahrenheit/Celsius" />
 
