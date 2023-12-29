@@ -16,6 +16,8 @@ import com.example.thelodge_ai.databinding.ActivityScanBinding
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class ScanActivity : AppCompatActivity() {
 
@@ -23,12 +25,15 @@ class ScanActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
 
+    private lateinit var cameraExecutor: ExecutorService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityScanBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         outputDirectory = outputDirectory()
+        cameraExecutor = Executors.newSingleThreadExecutor()
 
         if (allPermissionsGranted()) {
             startCamera()
@@ -67,11 +72,11 @@ class ScanActivity : AppCompatActivity() {
             outputOptions, ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    // Implement your logic for a successful image capture here
+                    detectProduct(photoFile)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    // Implement your logic for handling errors here
+                    Log.e(Const.TAG, "onError: ${exception.message}", exception)
                 }
             }
         )
@@ -133,5 +138,20 @@ class ScanActivity : AppCompatActivity() {
                 baseContext, it
             ) == PackageManager.PERMISSION_GRANTED
         }
+
+    private fun detectProduct(photoFile: File){
+        runOnUiThread {
+            Toast.makeText(
+                this,
+                "Picture saved successfully!",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    override fun onDestroy() {
+         super.onDestroy()
+        cameraExecutor.shutdown()
+    }
 
 }
