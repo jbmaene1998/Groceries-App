@@ -3,6 +3,8 @@ package com.example.thelodge_ai
 import AppPreferences
 import FirestoreHelper
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
