@@ -18,6 +18,10 @@ class FridgeActivity : AppCompatActivity() {
     private lateinit var humidityValue: TextView
     private val firestoreHelper = FirestoreHelper()
 
+    private val updateInterval: Long = 5000 // 5 seconds
+    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var updateRunnable: Runnable
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fridge)
@@ -34,6 +38,19 @@ class FridgeActivity : AppCompatActivity() {
         val isFahrenheit = AppPreferences.getInstance(this).isFahrenheit
         temperatureTitle.text = if (isFahrenheit) "Fahrenheit" else "Celsius"
 
+        // Create the initial update runnable
+        updateRunnable = object : Runnable {
+            override fun run() {
+                updateValuesFromFirestore()
+                handler.postDelayed(this, updateInterval)
+            }
+        }
+
+        // Start the update loop
+        handler.post(updateRunnable)
+    }
+
+    private fun updateValuesFromFirestore() {
         // Retrieve values from the last document in Firestore using FirestoreHelper
         firestoreHelper.getLastDocument(
             onSuccess = { fahrenheit, temperature, humidity, dewPoint ->
@@ -52,5 +69,11 @@ class FridgeActivity : AppCompatActivity() {
                 // Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
         )
+    }
+
+    override fun onDestroy() {
+        // Remove the update runnable when the activity is destroyed
+        handler.removeCallbacks(updateRunnable)
+        super.onDestroy()
     }
 }
