@@ -1,9 +1,8 @@
 package com.example.thelodge_ai
 
-import AppPreferences
-import FirestoreHelper
 import android.os.Bundle
-import android.widget.TextView
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class FridgeActivity : AppCompatActivity() {
@@ -15,7 +14,7 @@ class FridgeActivity : AppCompatActivity() {
     private lateinit var humidityTitle: TextView
     private lateinit var humidityValue: TextView
     private val firestoreHelper = FirestoreHelper()
-
+    private lateinit var refreshButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,14 +28,25 @@ class FridgeActivity : AppCompatActivity() {
         humidityTitle = findViewById(R.id.humidityTitle)
         humidityValue = findViewById(R.id.humidityValue)
 
-        // Set text based on preferences
-        val isFahrenheit = AppPreferences.getInstance(this).isFahrenheit
-        temperatureTitle.text = if (isFahrenheit) "Fahrenheit" else "Celsius"
+        // Initialize the refresh button
+        refreshButton = findViewById(R.id.refreshButton)
+        refreshButton.setOnClickListener {
+            fetchDataAndDisplay()
+        }
 
+        // Call the method to retrieve and display data for the first time
+        fetchDataAndDisplay()
+    }
+
+    // Method to retrieve and display data
+    private fun fetchDataAndDisplay() {
         // Retrieve values from the last document in Firestore using FirestoreHelper
         firestoreHelper.getLastDocument(
             onSuccess = { fahrenheit, temperature, humidity, dewPoint ->
                 // Set the TextViews with the retrieved values
+                val isFahrenheit = AppPreferences.getInstance(this).isFahrenheit
+                temperatureTitle.text = if (isFahrenheit) "Fahrenheit" else "Celsius"
+
                 if (isFahrenheit) {
                     temperatureValue.text = String.format("%.2f °F", fahrenheit)
                 } else {
@@ -44,11 +54,12 @@ class FridgeActivity : AppCompatActivity() {
                 }
                 dewPointValue.text = String.format("%.2f", dewPoint)
                 humidityValue.text = String.format("%.2f", humidity)
+
+                Toast.makeText(this, "Data refreshed", Toast.LENGTH_SHORT).show()
             },
             onFailure = { exception ->
                 // Handle failures
-                // For example, show an error message
-                // Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
         )
     }

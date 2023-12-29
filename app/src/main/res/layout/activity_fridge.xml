@@ -77,4 +77,14 @@
         android:layout_marginBottom="16dp"
         android:text="Humidity" />
 
+    <Button
+        android:id="@+id/refreshButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/humidityValue"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Refresh Data" />
+
+
 </RelativeLayout>
