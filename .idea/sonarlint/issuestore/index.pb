@@ -7,8 +7,6 @@ H
 app/google-services.json,f\d\fd8d34b142d02ec743a8efefefd2c097961666e9
 @
 build.gradle.kts,d\b\dbcff70658daf80b53ce624f6adcaa529df5ed8d
->
-app/.gitignore,5\1\51e1c5d383dfaa35e0e7e5873a0a99355a86880f
 T
 $app/src/main/res/activity_fridge.xml,2\f\2f4957bfdbc0e2b745814bb93b53c1f6e9b02f01
 U
