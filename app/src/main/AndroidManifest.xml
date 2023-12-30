@@ -37,6 +37,11 @@
             android:label="Groceries App"
             android:theme="@style/Theme.TheLodgeAI"/>
 
+        <activity
+            android:name="com.example.thelodge_ai.RecipesActivity"
+            android:label="Groceries App"
+            android:theme="@style/Theme.TheLodgeAI"/>
+
         <!-- Settings Activity -->
         <activity
             android:name=".SettingsActivity"

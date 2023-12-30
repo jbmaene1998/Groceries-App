@@ -29,18 +29,18 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, ScanActivity::class.java))
         }
 
+        // Recipes Button
+        val recipesButton: Button = findViewById(R.id.btnRecipes)
+        recipesButton.setOnClickListener {
+            // Handle Settings button click
+            startActivity(Intent(this, RecipesActivity::class.java))
+        }
+
         // Settings Button
         val settingsButton: Button = findViewById(R.id.btnSettings)
         settingsButton.setOnClickListener {
             // Handle Settings button click
             startActivity(Intent(this, SettingsActivity::class.java))
-        }
-
-        // Recipes Button
-        val recipesButton: Button = findViewById(R.id.btnRecipes)
-        recipesButton.setOnClickListener {
-            // Handle Settings button click
-            startActivity(Intent(this, Recipes::class.java))
         }
     }
 }

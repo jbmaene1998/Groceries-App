@@ -76,14 +76,3 @@ dependencies {
     //implementation("com.google.firebase:firebase-core:23.0.0")
     implementation("com.google.firebase:firebase-firestore:24.0.0")
 }
-
-android {
-    buildTypes {
-        debug {
-            buildConfigField("String", "OPENAI_API_KEY", "\"${project.findProperty("openaiApiKey") ?: ""}\"")
-        }
-        release {
-            buildConfigField("String", "OPENAI_API_KEY", "\"${project.findProperty("openaiApiKey") ?: ""}\"")
-        }
-    }
-}
