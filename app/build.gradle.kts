@@ -24,6 +24,10 @@ android {
         viewBinding = true
     }
 
+    packagingOptions {
+        exclude("META-INF/DEPENDENCIES")
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -75,4 +79,5 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation("com.google.guava:guava:30.1-android")
 }

@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import android.widget.Toast.makeText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -12,14 +13,21 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.thelodge_ai.databinding.ActivityScanBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.DataOutputStream
 import java.io.File
+import java.io.FileInputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
-import okhttp3.OkHttpClient
 
 class ScanActivity : AppCompatActivity() {
 
@@ -50,10 +58,10 @@ class ScanActivity : AppCompatActivity() {
     }
 
     private fun outputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {mFile ->
-                File(mFile, resources.getString(R.string.app_name)).apply {
-                    mkdirs()
-                }
+        val mediaDir = externalMediaDirs.firstOrNull()?.let { mFile ->
+            File(mFile, resources.getString(R.string.app_name)).apply {
+                mkdirs()
+            }
         }
 
         return if (mediaDir != null && mediaDir.exists())
@@ -84,15 +92,18 @@ class ScanActivity : AppCompatActivity() {
     }
 
 
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == Const.REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera()
-            }else{
-                Toast.makeText(this, "Permissions not granted by user", Toast.LENGTH_SHORT).show()
+            } else {
+                makeText(this, "Permissions not granted by user", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
@@ -141,42 +152,69 @@ class ScanActivity : AppCompatActivity() {
         }
 
     override fun onDestroy() {
-         super.onDestroy()
+        super.onDestroy()
         cameraExecutor.shutdown()
     }
 
-    private fun detectProduct(photoFile: File) {
-        val client = OkHttpClient()
+    suspend fun uploadImageAsync(photoFile: File): String {
+        return withContext(Dispatchers.IO) {
+            val url = URL("http://localhost:5000/upload")
+            val connection = url.openConnection() as HttpURLConnection
 
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart(
-                "file", photoFile.name,
-                photoFile.asRequestBody("image/*".toMediaTypeOrNull())
-            )
-            .build()
+            try {
+                connection.doOutput = true
+                connection.requestMethod = "POST"
 
-        val request = Request.Builder()
-            .url("http://localhost:5000/upload")
-            .post(requestBody)
-            .build()
+                val outputStream = DataOutputStream(connection.outputStream)
+                val fileInputStream = FileInputStream(photoFile)
+                val buffer = ByteArray(4096)
+                var bytesRead: Int
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val message = response.body?.string() ?: "Unknown response"
-                    runOnUiThread {
-                        Toast.makeText(this@ScanActivity, message, Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Log.e(Const.TAG, "Upload failed: ${response.message}")
+                while (fileInputStream.read(buffer).also { bytesRead = it } != -1) {
+                    outputStream.write(buffer, 0, bytesRead)
                 }
-            }
 
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e(Const.TAG, "Upload failed: ${e.message}", e)
+                outputStream.flush()
+                outputStream.close()
+
+                // Check the server response
+                val responseCode = connection.responseCode
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Handle the successful upload
+                    // Read the response from the server
+                    val responseBody = connection.inputStream.bufferedReader().use { it.readText() }
+                    // Parse the JSON response
+                    val jsonObject = JSONObject(responseBody)
+                    val result = jsonObject.getString("result")
+
+                    // Handle the result as needed
+                    return@withContext result
+                } else {
+                    // Handle the error
+                    throw RuntimeException("Error uploading image. Response Code: $responseCode")
+                }
+            } catch (e: Exception) {
+                // Handle other exceptions here
+                e.printStackTrace()
+                throw e
+            } finally {
+                connection.disconnect()
             }
-        })
+        }
     }
 
+
+    private fun detectProduct(photoFile: File) {
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                uploadImageAsync(photoFile)
+            }
+
+            if (result != "Nothing") {
+                Toast.makeText(null, result, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(null, "Nothing detected", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }
