@@ -44,4 +44,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="Settings" />
+
+    <!-- Settings Button -->
+    <Button
+        android:id="@+id/btnRecipes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnAddProduct"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Recipes" />
 </RelativeLayout>
