@@ -39,6 +39,35 @@ class FirestoreHelper {
             }
     }
 
+    fun listenForIngredientsChanges(
+        onSuccess: (List<String>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val collectionReference = firestore.collection("ingredients")
+
+        // Listen for changes in the "ingredients" collection
+        collectionReference.addSnapshotListener { querySnapshot, exception ->
+            if (exception != null) {
+                // Handle failures in listening for changes
+                onFailure.invoke(exception)
+                return@addSnapshotListener
+            }
+
+            val ingredientsList = mutableListOf<String>()
+
+            // Iterate through documents and get the ingredients
+            querySnapshot?.documents?.forEach { documentSnapshot ->
+                val ingredient = documentSnapshot.getString("ingredient")
+                ingredient?.let {
+                    ingredientsList.add(it)
+                }
+            }
+
+            // Invoke the success callback with the list of ingredients
+            onSuccess.invoke(ingredientsList)
+        }
+    }
+
     fun getAllIngredients(
         onSuccess: (List<Map<String, Any>>) -> Unit,
         onFailure: (Exception) -> Unit
@@ -66,6 +95,7 @@ class FirestoreHelper {
                 onFailure.invoke(exception)
             }
     }
+
 
 
     fun deleteDocument(
