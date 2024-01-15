@@ -24,7 +24,7 @@ class RecipesActivity() : AppCompatActivity() {
             onSuccess = { ingredientsList ->
                 // Convert ingredientsList to a string array and create the input text
                 val uniqueIngredients = ingredientsList.toSet()
-                val inputText = "Give a healthy recipe for a student: Recipe name, ingredients and guide to make the recipe. Based on following ingredients: ${uniqueIngredients.joinToString(", ")}"
+                val inputText = "Give a healthy recipe for a student: Recipe name, ingredients and guide to make the recipe. Using at least one of the following ingredients: ${uniqueIngredients.joinToString(", ")}"
 
                 // Make the API request
                 val generatedText = makeApiRequest(inputText)
