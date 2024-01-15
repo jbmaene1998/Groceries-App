@@ -1,6 +1,4 @@
 
-q
-Aapp/src/main/java/com/example/thelodge_ai/utils/AppPreferences.kt,e\b\ebc273c333cf0ddc77189bcb415d6e2ccfaf33e1
 m
 =app/src/main/java/com/example/thelodge_ai/SettingsActivity.kt,0\c\0cfd62f0d5947faf351946775778679fbb884fa1
 H
@@ -13,10 +11,6 @@ U
 %app/src/main/res/activity_metrics.xml,3\a\3a22e671d53e2f0207ba9bd016c3d00280a9996e
 [
 +app/src/main/res/layout/activity_fridge.xml,f\e\feeccb389f6c642f7a59a8ae7c7cce6052756fec
-l
-<app/src/main/java/com/example/thelodge_ai/utils/Firestore.kt,1\3\13817b4b106d49dea0f2f407c63c741d9aaba473
-k
-;app/src/main/java/com/example/thelodge_ai/FridgeActivity.kt,2\9\29e47188d4b9c5d85efc30288dbbdb8b4fd5a0b6
 ]
 -app/src/main/res/layout/activity_settings.xml,8\6\863a9a048ab5cf80439b30a73a719f47f13c462e
 D
@@ -30,5 +24,3 @@ Y
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
 i
 9app/src/main/java/com/example/thelodge_ai/MainActivity.kt,7\6\76898c225a01c1b449f228ff8bc67e9c7a780049
-l
-<app/src/main/java/com/example/thelodge_ai/RecipesActivity.kt,b\3\b3778c0dca458c8a2a4641befc2e05a90cf61528

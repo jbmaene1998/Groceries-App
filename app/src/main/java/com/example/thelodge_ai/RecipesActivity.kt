@@ -19,6 +19,26 @@ class RecipesActivity() : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipes)
 
+        // Listen for changes in the "ingredients" collection
+        firestoreHelper.listenForIngredientsChanges(
+            onSuccess = { ingredientsList ->
+                // Convert ingredientsList to a string array and create the input text
+                val inputText = "Give a healthy recipe for a student: Recipe name, ingredients and guide to make the recipe. Based on following ingredients: ${ingredientsList.joinToString(", ")}"
+
+                // Make the API request
+                val generatedText = makeApiRequest(inputText)
+
+                // Find the TextView and set the generated text
+                val generatedTextView = findViewById<TextView>(R.id.generatedTextView)
+                generatedTextView.text = generatedText
+            },
+            onFailure = { exception ->
+                // Handle failure to listen for changes
+                showErrorMessage("Firestore Listen Failed: ${exception.message}")
+
+            }
+        )
+
         val inputText = "Give a healty recipe for a student: Recipe name, ingredients and guide to make the recipe. Based on following ingredients: apple, sausage, potatoes"
         val generatedText = makeApiRequest(inputText)
 
