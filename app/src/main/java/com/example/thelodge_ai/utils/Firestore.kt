@@ -67,4 +67,51 @@ class FirestoreHelper {
             onSuccess.invoke(ingredientsList)
         }
     }
+
+    fun getAllIngredients(
+        onSuccess: (List<Map<String, Any>>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val collectionReference = firestore.collection("ingredients")
+
+        collectionReference
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val documents = mutableListOf<Map<String, Any>>()
+
+                for (documentSnapshot in querySnapshot) {
+                    val data = documentSnapshot.data
+                    val document = mutableMapOf<String, Any>()
+
+                    document["id"] = documentSnapshot.id
+                    document["name"] = data["ingredient"] as Any // Update field name if needed
+
+                    documents.add(document)
+                }
+
+                onSuccess.invoke(documents)
+            }
+            .addOnFailureListener { exception ->
+                onFailure.invoke(exception)
+            }
+    }
+
+
+
+    fun deleteDocument(
+        documentId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val collectionReference = firestore.collection("ingredients")
+
+        collectionReference.document(documentId)
+            .delete()
+            .addOnSuccessListener {
+                onSuccess.invoke()
+            }
+            .addOnFailureListener { exception ->
+                onFailure.invoke(exception)
+            }
+    }
 }

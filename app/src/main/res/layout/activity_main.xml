@@ -9,11 +9,11 @@
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="@android:color/black"
         android:text="Home Screen"
         android:textSize="38sp"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginTop="16dp"/>
 
     <!-- Check Fridge Button -->
     <Button
@@ -54,4 +54,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="Recipes" />
+
+    <!-- Ingredients Button -->
+    <Button
+        android:id="@+id/btnIngredients"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnRecipes"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="My Ingredients" />
 </RelativeLayout>

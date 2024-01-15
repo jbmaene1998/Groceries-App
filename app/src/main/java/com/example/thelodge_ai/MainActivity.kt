@@ -42,5 +42,13 @@ class MainActivity : AppCompatActivity() {
             // Handle Settings button click
             startActivity(Intent(this, SettingsActivity::class.java))
         }
+
+
+        // Ingredients Button
+        val ingredientsButton: Button = findViewById(R.id.btnIngredients)
+        ingredientsButton.setOnClickListener {
+            // Handle Settings button click
+            startActivity(Intent(this, IngredientsActivity::class.java))
+        }
     }
 }
