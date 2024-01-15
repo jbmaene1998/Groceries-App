@@ -48,14 +48,15 @@ class FirestoreHelper {
         collectionReference
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val documents = mutableListOf<Any>()
+                val documents = mutableListOf<Map<String, Any>>()
 
                 for (documentSnapshot in querySnapshot) {
                     val data = documentSnapshot.data
-                    val document = mapOf(
-                        "id" to documentSnapshot.id,
-                        "name" to data["ingredient"] // Add other fields as needed
-                    )
+                    val document = mutableMapOf<String, Any>()
+
+                    document["id"] = documentSnapshot.id
+                    document["name"] = data["ingredient"] as Any // Update field name if needed
+
                     documents.add(document)
                 }
 
@@ -65,6 +66,7 @@ class FirestoreHelper {
                 onFailure.invoke(exception)
             }
     }
+
 
     fun deleteDocument(
         documentId: String,

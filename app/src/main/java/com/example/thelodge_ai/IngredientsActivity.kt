@@ -30,7 +30,7 @@ class IngredientsActivity : AppCompatActivity() {
                 for (document in documents) {
                     val ingredient = Ingredient(
                         id = document["id"].toString(),
-                        name = document["ingredient"].toString()
+                        name = document["name"].toString() // Update field name if needed
                     )
                     displayIngredient(ingredient)
                 }
