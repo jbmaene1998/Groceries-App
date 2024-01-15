@@ -1,20 +1,19 @@
 package com.example.thelodge_ai
 
+import FirestoreHelper
 import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.FirebaseFirestore
-
-data class Ingredient(
-    val id: String,
-    val name: String,
-)
 
 class IngredientsActivity : AppCompatActivity() {
 
+    data class Ingredient(
+        val id: String,
+        val name: String,
+    )
     private val firestoreHelper = FirestoreHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +29,8 @@ class IngredientsActivity : AppCompatActivity() {
 
                 for (document in documents) {
                     val ingredient = Ingredient(
-                        id = document.id,
+                        id = document["id"].toString(),
                         name = document["ingredient"].toString()
-                        // Add other properties as needed
                     )
                     displayIngredient(ingredient)
                 }

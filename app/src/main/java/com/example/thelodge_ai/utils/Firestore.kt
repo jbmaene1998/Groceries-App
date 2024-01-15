@@ -51,8 +51,12 @@ class FirestoreHelper {
                 val documents = mutableListOf<Map<String, Any>>()
 
                 for (documentSnapshot in querySnapshot) {
-                    val data = documentSnapshot.data
-                    documents.add(data)
+                    //val data = documentSnapshot.data
+                    val document = mapOf(
+                        "id" to documentSnapshot.id,
+                        "name" to documentSnapshot.data["ingredient"]// Add other fields as needed""
+                    )
+                    documents.add(document as Map<String, Any>)
                 }
 
                 onSuccess.invoke(documents)
