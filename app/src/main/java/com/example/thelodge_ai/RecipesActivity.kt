@@ -13,7 +13,7 @@ import java.net.URL
 
 class RecipesActivity() : AppCompatActivity() {
 
-    private val apiKey: String = "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"
+    private val apiKey: String = "https://chat.openai.com/share/60b4f38c-0985-4659-836f-eb4feeab5f62"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
