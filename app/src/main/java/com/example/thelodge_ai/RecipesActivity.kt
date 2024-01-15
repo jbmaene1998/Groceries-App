@@ -1,5 +1,6 @@
 package com.example.thelodge_ai
 
+import FirestoreHelper
 import android.os.AsyncTask
 import android.os.Bundle
 import android.widget.TextView
@@ -13,24 +14,40 @@ import java.net.URL
 
 class RecipesActivity() : AppCompatActivity() {
 
-    private val apiKey: String = "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"
+    private val apiKey: String = "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"
+
+    private val firestoreHelper = FirestoreHelper();
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipes)
 
-        val inputText = "Give a healty recipe for a student: Recipe name, ingredients and guide to make the recipe. Based on following ingredients: apple, sausage, potatoes"
-        val generatedText = makeApiRequest(inputText)
+        // Listen for changes in the "ingredients" collection
+        firestoreHelper.listenForIngredientsChanges(
+            onSuccess = { ingredientsList ->
+                // Convert ingredientsList to a string array and create the input text
+                val uniqueIngredients = ingredientsList.toSet()
+                val inputText = "Give a healthy recipe for a student: Recipe name, ingredients and guide to make the recipe. Using at least one of the following ingredients: ${uniqueIngredients.joinToString(", ")}"
 
-        // Find the TextView and set the generated text
-        val generatedTextView = findViewById<TextView>(R.id.generatedTextView)
-        generatedTextView.text = "Loading recipe..."
+                // Make the API request
+                val generatedText = makeApiRequest(inputText)
+
+                // Find the TextView and set the generated text
+                val generatedTextView = findViewById<TextView>(R.id.generatedTextView)
+                generatedTextView.text = generatedText.toString()
+            },
+            onFailure = { exception ->
+                // Handle failure to listen for changes
+                //showErrorMessage("Firestore Listen Failed: ${exception.message}")
+
+            }
+        )
     }
 
     private inner class ApiRequestTask : AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg params: String): String {
             try {
-                val endpoint = "https://api.openai.com/v1/engines/text-davinci-003/completions"
+                val endpoint = "https://api.openai.com/v1/engines/gpt-3.5-turbo-instruct/completions"
                 val url = URL(endpoint)
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "POST"
@@ -38,7 +55,7 @@ class RecipesActivity() : AppCompatActivity() {
                 connection.setRequestProperty("Authorization", "Bearer $apiKey")
                 connection.doOutput = true
 
-                val jsonInputString = "{\"prompt\":\"${params[0]}\",\"max_tokens\":150}"
+                val jsonInputString = "{\"prompt\":\"${params[0]}\",\"max_tokens\":300}"
                 val outputStream: OutputStream = connection.outputStream
                 outputStream.write(jsonInputString.toByteArray(charset("UTF-8")))
                 outputStream.flush()
