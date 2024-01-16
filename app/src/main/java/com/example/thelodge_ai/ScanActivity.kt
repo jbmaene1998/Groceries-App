@@ -1,5 +1,6 @@
 package com.example.thelodge_ai
 
+import FirestoreHelper
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -19,10 +20,18 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.File
-import java.io.FileInputStream
-import java.net.HttpURLConnection
-import java.net.URL
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -33,6 +42,8 @@ class ScanActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+
+    private val firestoreHelper = FirestoreHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,42 +164,72 @@ class ScanActivity : AppCompatActivity() {
         cameraExecutor.shutdown()
     }
 
-    fun uploadImageAsync(photoFile: File): String {
-        var connection: HttpURLConnection? = null
+    fun uploadImageAsync(photoFile: File) {
         try {
-            val url = URL("http://127.0.0.1:5000/upload")
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = "POST"
-            connection.setRequestProperty("Content-Type", "multipart/form-data")
-            connection.doOutput = true
+            val client = OkHttpClient()
 
-            val outputStream = connection.outputStream
+            val requestBody = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", photoFile.name, RequestBody.create("image/jpeg".toMediaTypeOrNull(), photoFile))
+                .build()
 
-            val fileInputStream = FileInputStream(photoFile)
-            val buffer = ByteArray(1024)
-            var bytesRead: Int
-            while (fileInputStream.read(buffer).also { bytesRead = it } != -1) {
-                outputStream.write(buffer, 0, bytesRead)
-            }
-            fileInputStream.close()
-            outputStream.flush()
+            val request = Request.Builder()
+                .url("http://192.168.137.229:5000/upload")
+                .post(requestBody)
+                .build()
 
-            val responseCode = connection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val inputStream = connection.inputStream
-                val response = inputStream.bufferedReader().use { it.readText() }
-                inputStream.close()
-                return response
-            } else {
-                return "Error: $responseCode"
-            }
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body?.string()
+                        // Parse the JSON response to get the result
+                        val result = parseResultFromJson(responseBody)
+
+                        // Show a toast with the result
+                        showToast(result)
+
+                        firestoreHelper.addIngredient(
+                            ingredient = result,
+                            onSuccess = { newDocumentId ->
+                                println("Successfully added $result with ID: $newDocumentId")
+                            },
+                            onFailure = { exception ->
+                                println("Error adding $result: ${exception.message}")
+                            }
+                        )
+                    } else {
+                        // Handle the error case
+                        showToast("Error: ${response.code}")
+                    }
+                }
+            })
         } catch (e: Exception) {
-            return "Error: ${e.message}"
-        } finally {
-            connection?.disconnect()
+            e.printStackTrace()
+            // Handle other exceptions specific to your use case
         }
     }
 
+    private fun showToast(message: String) {
+        runOnUiThread {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun parseResultFromJson(json: String?): String {
+        // Implement your JSON parsing logic here
+        // For simplicity, assuming a straightforward JSON structure
+        return try {
+            val jsonObject = JSONObject(json)
+            jsonObject.getString("result")
+        } catch (e: JSONException) {
+            // Handle JSON parsing exception
+            ""
+        }
+    }
 
 
     private fun detectProduct(photoFile: File) {
@@ -196,12 +237,8 @@ class ScanActivity : AppCompatActivity() {
             val result = withContext(Dispatchers.IO) {
                 uploadImageAsync(photoFile)
             }
-
-            if (result != "Nothing") {
-                Toast.makeText(null, result, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(null, "Nothing detected", Toast.LENGTH_SHORT).show()
-            }
         }
     }
+
+
 }
