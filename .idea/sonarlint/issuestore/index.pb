@@ -1,4 +1,6 @@
 
+q
+Aapp/src/main/java/com/example/thelodge_ai/utils/AppPreferences.kt,e\b\ebc273c333cf0ddc77189bcb415d6e2ccfaf33e1
 m
 =app/src/main/java/com/example/thelodge_ai/SettingsActivity.kt,0\c\0cfd62f0d5947faf351946775778679fbb884fa1
 H
@@ -15,12 +17,8 @@ U
 -app/src/main/res/layout/activity_settings.xml,8\6\863a9a048ab5cf80439b30a73a719f47f13c462e
 D
 app/build.gradle.kts,d\2\d2a4383452aad84a18429a5844d31330a012a9e6
-Y
-)app/src/main/res/layout/activity_main.xml,7\6\76b07e40f24cce093536731477540f12e7da3cb6
 >
 app/.gitignore,5\1\51e1c5d383dfaa35e0e7e5873a0a99355a86880f
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
-i
-9app/src/main/java/com/example/thelodge_ai/MainActivity.kt,7\6\76898c225a01c1b449f228ff8bc67e9c7a780049

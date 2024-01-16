@@ -39,33 +39,48 @@ class FirestoreHelper {
             }
     }
 
-    fun listenForIngredientsChanges(
-        onSuccess: (List<String>) -> Unit,
+    fun getAllIngredients(
+        onSuccess: (List<Map<String, Any>>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         val collectionReference = firestore.collection("ingredients")
 
-        // Listen for changes in the "ingredients" collection
-        collectionReference.addSnapshotListener { querySnapshot, exception ->
-            if (exception != null) {
-                // Handle failures in listening for changes
-                onFailure.invoke(exception)
-                return@addSnapshotListener
-            }
+        collectionReference
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val documents = mutableListOf<Any>()
 
-            val ingredientsList = mutableListOf<String>()
-
-            // Iterate through documents and get the ingredients
-            querySnapshot?.documents?.forEach { documentSnapshot ->
-                val ingredient = documentSnapshot.getString("ingredient")
-                ingredient?.let {
-                    ingredientsList.add(it)
+                for (documentSnapshot in querySnapshot) {
+                    val data = documentSnapshot.data
+                    val document = mapOf(
+                        "id" to documentSnapshot.id,
+                        "name" to data["ingredient"] // Add other fields as needed
+                    )
+                    documents.add(document)
                 }
-            }
 
-            // Invoke the success callback with the list of ingredients
-            onSuccess.invoke(ingredientsList)
-        }
+                onSuccess.invoke(documents)
+            }
+            .addOnFailureListener { exception ->
+                onFailure.invoke(exception)
+            }
+    }
+
+    fun deleteDocument(
+        documentId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val collectionReference = firestore.collection("ingredients")
+
+        collectionReference.document(documentId)
+            .delete()
+            .addOnSuccessListener {
+                onSuccess.invoke()
+            }
+            .addOnFailureListener { exception ->
+                onFailure.invoke(exception)
+            }
     }
 
     fun addIngredient(
