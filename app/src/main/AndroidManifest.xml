@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
 
         android:allowBackup="true"
@@ -52,11 +56,5 @@
             android:name=".SettingsActivity"
             android:label="Groceries App"
             android:theme="@style/Theme.TheLodgeAI"/>
-
     </application>
-
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
 </manifest>

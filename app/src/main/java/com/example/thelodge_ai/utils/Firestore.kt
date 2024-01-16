@@ -39,35 +39,6 @@ class FirestoreHelper {
             }
     }
 
-    fun listenForIngredientsChanges(
-        onSuccess: (List<String>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        val collectionReference = firestore.collection("ingredients")
-
-        // Listen for changes in the "ingredients" collection
-        collectionReference.addSnapshotListener { querySnapshot, exception ->
-            if (exception != null) {
-                // Handle failures in listening for changes
-                onFailure.invoke(exception)
-                return@addSnapshotListener
-            }
-
-            val ingredientsList = mutableListOf<String>()
-
-            // Iterate through documents and get the ingredients
-            querySnapshot?.documents?.forEach { documentSnapshot ->
-                val ingredient = documentSnapshot.getString("ingredient")
-                ingredient?.let {
-                    ingredientsList.add(it)
-                }
-            }
-
-            // Invoke the success callback with the list of ingredients
-            onSuccess.invoke(ingredientsList)
-        }
-    }
-
     fun getAllIngredients(
         onSuccess: (List<Map<String, Any>>) -> Unit,
         onFailure: (Exception) -> Unit
@@ -77,15 +48,14 @@ class FirestoreHelper {
         collectionReference
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val documents = mutableListOf<Map<String, Any>>()
+                val documents = mutableListOf<Any>()
 
                 for (documentSnapshot in querySnapshot) {
                     val data = documentSnapshot.data
-                    val document = mutableMapOf<String, Any>()
-
-                    document["id"] = documentSnapshot.id
-                    document["name"] = data["ingredient"] as Any // Update field name if needed
-
+                    val document = mapOf(
+                        "id" to documentSnapshot.id,
+                        "name" to data["ingredient"] // Add other fields as needed
+                    )
                     documents.add(document)
                 }
 
@@ -95,8 +65,6 @@ class FirestoreHelper {
                 onFailure.invoke(exception)
             }
     }
-
-
 
     fun deleteDocument(
         documentId: String,
@@ -113,5 +81,50 @@ class FirestoreHelper {
             .addOnFailureListener { exception ->
                 onFailure.invoke(exception)
             }
+    }
+
+    fun addIngredient(
+        ingredient: String,
+        onSuccess: (String) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val collectionReference = firestore.collection("ingredients")
+
+        // Use the provided map to get the ID for the ingredient
+        val optionalResults = mapOf(
+            "Banana" to 0,
+            "Cabbage" to 1,
+            "Carrots" to 2,
+            "Milk" to 3,
+            "Onion" to 4,
+            "Potato" to 5,
+            "Tomato" to 6
+        )
+
+        val ingredientId = optionalResults[ingredient] ?: -1
+
+        if (ingredientId != -1) {
+            // Create a new document with the specified ingredient and ID
+            val newIngredient = hashMapOf(
+                "ingredient" to ingredient,
+                "id" to ingredientId
+                // Add other properties as needed
+            )
+
+            // Add the new document to the "ingredients" collection
+            collectionReference
+                .add(newIngredient)
+                .addOnSuccessListener { documentReference ->
+                    // Retrieve the auto-generated ID of the newly added document
+                    val newDocumentId = documentReference.id
+                    onSuccess.invoke(newDocumentId)
+                }
+                .addOnFailureListener { exception ->
+                    onFailure.invoke(exception)
+                }
+        } else {
+            // Handle the case where the ingredient is not found in the map
+            onFailure.invoke(Exception("Invalid ingredient: $ingredient"))
+        }
     }
 }
